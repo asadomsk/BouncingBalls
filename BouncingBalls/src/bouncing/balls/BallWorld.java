@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.util.Random;
 import javax.swing.*;
 /**
- * The control logic and main display panel for game.
+ * The control logic and main display panel.
  */
 public class BallWorld extends JPanel {
    private static final int UPDATE_RATE = 30;  // Frames per second (fps)
@@ -17,7 +17,7 @@ public class BallWorld extends JPanel {
    private int canvasHeight;
    
    // Balls
-   private static final int MAX_BALLS = 6; // Max number allowed
+   private static final int MAX_BALLS = 8; // Max number allowed
    private Ball[] balls = new Ball[MAX_BALLS];
   
    /**
@@ -29,7 +29,16 @@ public class BallWorld extends JPanel {
       canvasWidth = width;
       canvasHeight = height;
       
-      for (int i = 0; i < MAX_BALLS; ++i) {
+      balls[0] = new Ball(100, 410, 25, 3, 34, Color.BLACK);
+      balls[1] = new Ball(80, 350, 25, 2, -114, Color.BLACK);
+      balls[2] = new Ball(530, 400, 30, 3, 14, Color.BLACK);
+      balls[3] = new Ball(400, 400, 30, 3, 14, Color.BLACK);
+      balls[4] = new Ball(400, 50, 35, 1, -47, Color.RED);
+      balls[5] = new Ball(480, 320, 35, 4, 47, Color.RED);
+      balls[6] = new Ball(80, 150, 40, 1, -114, Color.RED);
+      balls[7] = new Ball(100, 240, 40, 2, 60, Color.RED);
+      
+     /* for (int i = 0; i < MAX_BALLS; ++i) {
            
       // Init the ball at a random location, random speed (inside the box) and moveAngle
       Random rand = new Random();
@@ -45,10 +54,10 @@ public class BallWorld extends JPanel {
       Color randomColor = new Color(r, g, b);
       
       balls[i] = new Ball(x, y, radius, speed, angleInDegree, randomColor,Color.BLACK);
-      }
+      }*/
      
       // Init the Container Box to fill the screen
-      box = new ContainerBox(0, 0, canvasWidth, canvasHeight, Color.BLACK, Color.WHITE);
+      box = new ContainerBox(0, 0, canvasWidth, canvasHeight, Color.PINK, Color.WHITE);
      
       // Init the custom drawing panel for drawing the game
       canvas = new DrawCanvas();
@@ -97,6 +106,16 @@ public class BallWorld extends JPanel {
     * Update the game objects, with proper collision detection and response.
     */
    public void gameUpdate() {
+       // Check collision between two balls
+       for (int i = 0; i < MAX_BALLS; ++i) {
+          for (int j = 0; j < MAX_BALLS; ++j) {
+             if (i < j) {
+                balls[i].checkCollision(balls[j]);
+             }
+          }
+       }
+
+    // Check collision between the balls and the box
 	   for (int i = 0; i < MAX_BALLS; ++i) {
           balls[i].moveOneStepWithCollisionDetection(box);
       }
@@ -110,9 +129,21 @@ public class BallWorld extends JPanel {
          super.paintComponent(g);    // Paint background
          // Draw the box and the balls
          box.draw(g);
+         
          for (int i = 0; i < MAX_BALLS; ++i) {
              balls[i].draw(g);
          }
+             // draw center of circle
+             g.setColor(Color.red);
+             for (int i = 0; i < MAX_BALLS/2; ++i) {
+             g.fillOval((int) balls[i].getX() - 5, (int) balls[i].getY() - 5, 10, 10);
+             }
+             
+             g.setColor(Color.black);
+             for (int i = MAX_BALLS/2; i <MAX_BALLS; ++i) {
+             g.fillOval((int) balls[i].getX() - 5, (int) balls[i].getY() - 5, 10, 10);
+             }
+             
       }
   
       /** Called back to get the preferred size of the component. */
